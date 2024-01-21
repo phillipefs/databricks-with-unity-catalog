@@ -78,7 +78,3 @@ df_overwrite = (spark.read.format('delta')
 # COMMAND ----------
 
 display(df_overwrite)
-
-# COMMAND ----------
-
-
