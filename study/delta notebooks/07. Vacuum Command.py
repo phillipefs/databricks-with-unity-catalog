@@ -1,13 +1,20 @@
 # Databricks notebook source
-spark.conf.set("fs.azure.account.auth.type.deltadbstg.dfs.core.windows.net", "OAuth")
-spark.conf.set("fs.azure.account.oauth.provider.type.deltadbstg.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
-spark.conf.set("fs.azure.account.oauth2.client.id.deltadbstg.dfs.core.windows.net", "428e6361-2896-4a81-ba91-244293ad41d2")
-spark.conf.set("fs.azure.account.oauth2.client.secret.deltadbstg.dfs.core.windows.net", "4EF8Q~iHz-YEI2MNXB89HvmPYAmBpoL2MwLLGc_U")
-spark.conf.set("fs.azure.account.oauth2.client.endpoint.deltadbstg.dfs.core.windows.net", "https://login.microsoftonline.com/2d5dcdaa-3dc8-4853-a43b-ac7af2182644/oauth2/token")
+storage_name      = dbutils.secrets.get(scope="kv-databricks", key="storage-name")
+client_id_app     = dbutils.secrets.get(scope="kv-databricks", key="client-id-databricks")
+tenent_id_app     = dbutils.secrets.get(scope="kv-databricks", key="tenent-id-databricks")
+client_secret_app = dbutils.secrets.get(scope="kv-databricks", key="secret-databricks")
 
 # COMMAND ----------
 
-source = 'abfss://test@deltadbstg.dfs.core.windows.net/'
+spark.conf.set("fs.azure.account.auth.type.mathlab.dfs.core.windows.net", "OAuth")
+spark.conf.set("fs.azure.account.oauth.provider.type.mathlab.dfs.core.windows.net", "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider")
+spark.conf.set("fs.azure.account.oauth2.client.id.mathlab.dfs.core.windows.net", f"{client_id_app}")
+spark.conf.set("fs.azure.account.oauth2.client.secret.mathlab.dfs.core.windows.net", f"{client_secret_app}")
+spark.conf.set("fs.azure.account.oauth2.client.endpoint.mathlab.dfs.core.windows.net", f"https://login.microsoftonline.com/{tenent_id_app}/oauth2/token")
+
+# COMMAND ----------
+
+source = 'abfss://layer-bronze@mathlab.dfs.core.windows.net/databricks-uc-course/sample/'
 
 # COMMAND ----------
 
