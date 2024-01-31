@@ -8,7 +8,7 @@ schema = StructType([
 
 # COMMAND ----------
 
-source_dir = 'dbfs:/FileStore/streaming/'
+source_dir = '/FileStore/tables/streaming/'
 
 # COMMAND ----------
 
@@ -44,7 +44,3 @@ display(df)
 # COMMAND ----------
 
 WriteStream.stop()
-
-# COMMAND ----------
-
-
