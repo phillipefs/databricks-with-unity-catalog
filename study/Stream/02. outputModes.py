@@ -23,7 +23,7 @@ schema = StructType([
 
 # COMMAND ----------
 
-source_dir = 'dbfs:/FileStore/streaming/'
+source_dir = '/FileStore/tables/streaming/'
 
 # COMMAND ----------
 
@@ -72,7 +72,3 @@ df_complete = df.groupBy('Country').agg(sum('Citizens').alias('Total_Population'
 
 # MAGIC %sql
 # MAGIC SELECT * FROM stream.CompleteTable
-
-# COMMAND ----------
-
-
