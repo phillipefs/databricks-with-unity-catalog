@@ -17,7 +17,7 @@ schema = StructType([
                      StructField('Citizens',IntegerType())
 ])
 
-source_dir = 'dbfs:/FileStore/streaming/'
+source_dir = '/FileStore/tables/streaming/'
 
 # COMMAND ----------
 
@@ -44,10 +44,6 @@ df = spark.readStream.format("csv")\
         .outputMode("append")
         .queryName('DefaultTrigger')
         .toTable("stream.AppendTable"))
-
-# COMMAND ----------
-
-
 
 # COMMAND ----------
 
@@ -88,7 +84,3 @@ df = spark.readStream.format("csv")\
 
 # MAGIC %sql
 # MAGIC drop table stream.AppendTable
-
-# COMMAND ----------
-
-
