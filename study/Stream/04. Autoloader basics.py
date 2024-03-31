@@ -1,6 +1,7 @@
 # Databricks notebook source
 dbutils.fs.rm('dbfs:/user/hive/warehouse/stream.db',True)
 dbutils.fs.rm('dbfs:/FileStore/streaming',True)
+dbutils.fs.rm('dbfs:/FileStore/tables/streaming',True)
 
 # COMMAND ----------
 
@@ -16,7 +17,7 @@ dbutils.fs.rm('dbfs:/FileStore/streaming',True)
 
 # COMMAND ----------
 
-source_dir = 'dbfs:/FileStore/streaming/'
+source_dir = 'dbfs:/FileStore/tables/streaming/'
 
 # COMMAND ----------
 
@@ -30,18 +31,14 @@ df = spark.readStream\
 
 # COMMAND ----------
 
-dbutils.fs.ls(f'{source_dir}/schemaInfer')
-
-# COMMAND ----------
-
-dbutils.fs.ls('dbfs:/FileStore/streaming/schemaInfer/_schemas/')
+dbutils.fs.ls('dbfs:/FileStore/tables/streaming/schemaInfer/_schemas/')
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC
 # MAGIC SELECT *
-# MAGIC FROM JSON.`dbfs:/FileStore/streaming/schemaInfer/_schemas/0`
+# MAGIC FROM JSON.`dbfs:/FileStore/tables/streaming/schemaInfer/_schemas/0`
 
 # COMMAND ----------
 
