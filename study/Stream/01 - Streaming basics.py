@@ -6,6 +6,7 @@ schema = StructType([
                      StructField('Citizens',IntegerType())
 ])
 
+
 # COMMAND ----------
 
 source_dir = '/FileStore/tables/streaming/'
