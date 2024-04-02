@@ -61,7 +61,27 @@ def create_table_raw_traffic(environment):
                             EV_Bike INT,
                             Extract_Time TIMESTAMP
                     );""")
+    print("************************************")
+
+# COMMAND ----------
+
+def create_table_raw_roads(environment):
+    print(f'Creating raw_roads table in {environment}_catalog')
+    spark.sql(f"""CREATE TABLE IF NOT EXISTS `{environment}_catalog`.`bronze`.`raw_roads`
+                        (
+                            Road_ID INT,
+                            Road_Category_Id INT,
+                            Road_Category VARCHAR(255),
+                            Region_ID INT,
+                            Region_Name VARCHAR(255),
+                            Total_Link_Length_Km DOUBLE,
+                            Total_Link_Length_Miles DOUBLE,
+                            All_Motor_Vehicles DOUBLE
+                    );""")
+    
+    print("************************************")
 
 # COMMAND ----------
 
 create_table_raw_traffic(env)
+create_table_raw_roads(env)
