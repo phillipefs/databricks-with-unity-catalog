@@ -9,10 +9,6 @@ landing = spark.sql("describe external location `landing`").select("url").collec
 
 # COMMAND ----------
 
-print(checkpoint)
-
-# COMMAND ----------
-
 def read_traffic_data():
     from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType
     from pyspark.sql.functions import current_timestamp
@@ -76,16 +72,64 @@ def read_road_data():
         
         ])
 
-    rawRoads_stream = (spark.readStream
+    raw_roads_stream = (spark.readStream
         .format("cloudFiles")
         .option("cloudFiles.format","csv")
         .option('cloudFiles.schemaLocation',f'{checkpoint}/raw_road_load/schema_infer')
         .option('header','true')
         .schema(schema)
         .load(landing+'/raw_roads/')
+        .withColumn("Extract_Time", current_timestamp())
         )
     
     print('Reading Succcess !!')
     print('*******************')
 
-    return rawRoads_stream
+    return raw_roads_stream
+
+# COMMAND ----------
+
+def write_traffic_fata(df_streaming,environment):
+    print(f'Writing data to {environment}_catalog raw_traffic table', end='' )
+    write_Stream = (df_streaming.writeStream
+                    .format('delta')
+                    .option("checkpointLocation",checkpoint + '/raw_traffic_load/checkpt')
+                    .outputMode('append')
+                    .queryName('raw_traffic_write_stream')
+                    .trigger(availableNow=True)
+                    .toTable(f"`{environment}_catalog`.`bronze`.`raw_traffic`"))
+    
+    write_Stream.awaitTermination()
+    print('Write Success')
+    print("****************************")    
+
+# COMMAND ----------
+
+def write_road_data(df_streaming,environment):
+    print(f'Writing data to {environment}_catalog raw_roads table', end='' )
+    write_Data = (df_streaming.writeStream
+                    .format('delta')
+                    .option("checkpointLocation",checkpoint + '/raw_road_load/checkpt')
+                    .option("mergeSchema", "true")
+                    .outputMode('append')
+                    .queryName('raw_road_write_stream')
+                    .trigger(availableNow=True)
+                    .toTable(f"`{environment}_catalog`.`bronze`.`raw_roads`"))
+    
+    write_Data.awaitTermination()
+    print('Write Success')
+    print("****************************")  
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Call Functions
+# MAGIC
+
+# COMMAND ----------
+
+df_traffic_stream = read_traffic_data()
+df_road_stream = read_road_data()
+
+write_traffic_fata(df_traffic_stream, environment=env)
+write_road_data(df_road_stream, environment=env)
