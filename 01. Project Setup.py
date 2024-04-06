@@ -4,10 +4,7 @@ env = dbutils.widgets.get("env")
 
 # COMMAND ----------
 
-
-bronze_path = spark.sql("""describe external location `bronze`""").select("url").collect()[0][0]
-silver_path = spark.sql("""describe external location `silver`""").select("url").collect()[0][0]
-gold_path   = spark.sql("""describe external location `gold`""").select("url").collect()[0][0]
+# MAGIC %run "./00. Common functions and variables"
 
 # COMMAND ----------
 
