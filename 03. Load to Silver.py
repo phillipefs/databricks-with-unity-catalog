@@ -61,3 +61,41 @@ write_streaming_table(
     output_mode='append'
 )
 
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Load Table Silver Roads
+
+# COMMAND ----------
+
+df_bronze_roads = spark.readStream.table(f"`{env}_catalog`.`bronze`.raw_roads")
+
+df_bronze_roads = (df_bronze_roads
+        .dropDuplicates()
+        .withColumn("Road_Category_Name",
+                 when(col('Road_Category') == 'TA', 'Class A Trunk Road')
+                .when(col('Road_Category') == 'TM', 'Class A Trunk Motor')
+                .when(col('Road_Category') == 'PA','Class A Principal road')
+                .when(col('Road_Category') == 'PM','Class A Principal Motorway')
+                .when(col('Road_Category') == 'M','Class B road')
+                .otherwise('NA'))
+        .withColumn("Road_Type",
+                 when(col('Road_Category_Name').like('%Class A%'),'Major')
+                .when(col('Road_Category_Name').like('%Class B%'),'Minor')
+                .otherwise('NA'))
+)
+
+write_streaming_table(
+    environment=env,
+    df_streaming=df_bronze_roads,
+    schema_table='silver',
+    table_name='silver_roads',
+    checkpoint_location = '/silver_roads_load/checkpt/',
+    output_mode='append'
+)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
